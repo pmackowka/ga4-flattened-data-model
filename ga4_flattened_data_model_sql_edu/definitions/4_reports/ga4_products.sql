@@ -16,7 +16,7 @@ WITH purchases AS (
         e.user_pseudo_id,
         
         -- Formujemy klucz by podłączyć atrybucję the źródła ruchu do sprzedaży
-        CONCAT(e.user_pseudo_id, CAST(e.ga_session_id AS STRING)) AS session_key,
+        e.session_key,
         
         -- Czas wbijania transakcji
         e.event_timestamp,
@@ -71,7 +71,7 @@ unnested_items AS (
         
         -- [OBLICZENIOWA] Wyliczamy manualnie z błędu G4 rynkowe the obroty czyste produktu
         -- na wypadek gdy item_revenue wpisany jako pole the string byl null / 0
-        (i.price * i.quantity) AS item_revenue
+        COALESCE(i.item_revenue, (i.price * i.quantity)) AS item_revenue
         
     -- "purchases p, UNNEST" operuje jak CROSS JOIN p z pod-tablicą i 
     FROM

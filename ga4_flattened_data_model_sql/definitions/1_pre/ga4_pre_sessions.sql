@@ -7,7 +7,7 @@ config {
 
 WITH session_events AS (
     SELECT
-        CONCAT(user_pseudo_id, CAST(ga_session_id AS STRING)) AS session_key,
+        session_key,
         user_pseudo_id,
         ga_session_id,
         event_timestamp,
