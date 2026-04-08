@@ -1,0 +1,7 @@
+{
+  "defaultSchema": "ga4_flattened",
+  "assertionSchema": "dataform_assertions",
+  "warehouse": "bigquery",
+  "defaultDatabase": "your-gcp-project-id",
+  "defaultLocation": "EU"
+}
