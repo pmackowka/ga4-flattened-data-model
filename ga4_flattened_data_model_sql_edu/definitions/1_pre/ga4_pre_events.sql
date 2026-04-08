@@ -38,9 +38,10 @@ WITH base AS (
         -- Identyfikator zalogowanego użytkownika (jeśli został przesłany do GA4)
         user_id,
         
-        -- Wyciągamy z the zagnieżdżonej tablicy (UNNEST) event_params identyfikator sesji ga_session_id.
+        -- Wyciągamy z zagnieżdżonej tablicy (UNNEST) event_params identyfikator sesji ga_session_id.
         -- Ta flaga to liczba całkowita (int_value).
         (SELECT value.int_value FROM UNNEST(event_params) WHERE key = 'ga_session_id') AS ga_session_id,
+        CONCAT(user_pseudo_id, CAST(ga_session_id AS STRING)) AS session_key,
         
         -- Wyciągamy pełen URL strony na której wywołano zdarzenie z parametru page_location (łańcuch tekstowy)
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_location') AS page_location,
@@ -54,14 +55,14 @@ WITH base AS (
         -- Przechwytujemy ręcznie zapisane medium z parametrów utm_medium
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'medium') AS param_medium,
         
-        -- Sięgamy po pole systemowe traffic_source (gromadzone algorytmem GA4). Często jest wadliwe.
-        traffic_source.source AS collected_source,
+        -- Sięgamy po pole systemowe session_traffic_source_last_click (gromadzone algorytmem GA4). Często jest wadliwe.
+        collected_traffic_source.manual_campaign.source AS collected_source,
+        collected_traffic_source.manual_campaign.medium AS collected_medium,
+        collected_traffic_source.manual_campaign.campaign_name AS collected_campaign,
         
-        -- Systemowe medium przypisane przez serwery GA4
-        traffic_source.medium AS collected_medium,
-        
-        -- Systemowa nazwa kampanii przypisana przez GA4
-        traffic_source.name AS collected_campaign,
+        session_traffic_source_last_click.manual_campaign.source AS session_fallback_source,
+        session_traffic_source_last_click.manual_campaign.medium AS session_fallback_medium,
+        session_traffic_source_last_click.manual_campaign.campaign_name AS session_fallback_campaign,
         
         -- Pobieramy cały nienaruszony blok danych e-commerce (np. id transakcji, kwota)
         ecommerce,
@@ -86,7 +87,7 @@ SELECT
     -- Przekazujemy identyfikator eventu
     event_id,
     -- Przekazujemy datę
-    event_date,
+    PARSE_DATE('%Y%m%d', event_date) AS event_date,
     -- Przekazujemy czas
     event_timestamp,
     -- Przekazujemy nazwę akcji
@@ -106,7 +107,8 @@ SELECT
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_source=([^&]+)'),
         param_source,
-        collected_source
+        collected_source,
+        session_fallback_source
     ) AS fixed_traffic_source,
     
     -- Szerokie przypisywanie twardego MEDIUM
@@ -114,7 +116,8 @@ SELECT
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_medium=([^&]+)'),
         param_medium,
-        collected_medium
+        collected_medium,
+        session_fallback_medium
     ) AS fixed_traffic_medium,
     
     -- Szerokie przypisywanie docelowej KAMPANII
@@ -122,7 +125,8 @@ SELECT
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_campaign=([^&]+)'),
         param_campaign,
-        collected_campaign
+        collected_campaign,
+        session_fallback_campaign
     ) AS fixed_traffic_campaign,
     
     -- Blok danych ecommerce idący paczką

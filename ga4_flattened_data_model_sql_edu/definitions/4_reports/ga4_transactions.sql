@@ -17,7 +17,7 @@ WITH purchase_events AS (
         e.user_pseudo_id,
         
         -- Wymiar The Session łącznego unikalnego
-        CONCAT(e.user_pseudo_id, CAST(e.ga_session_id AS STRING)) AS session_key,
+        e.session_key,
         
         -- Identyfikatory temporalne the Dat
         e.event_date,

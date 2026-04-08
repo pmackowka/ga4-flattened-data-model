@@ -16,7 +16,7 @@ WITH session_events AS (
     SELECT
         -- Generujemy unikalny pełny identyfikator sesji poprzez złączenie Cookie ID usera
         -- z ga_session_id (które samodzielnie nie jest unikalne globane, a tylko per użytkownik).
-        CONCAT(user_pseudo_id, CAST(ga_session_id AS STRING)) AS session_key,
+        session_key,
         
         -- Przekazujemy identyfikator użytkownika z wyliczeń pre_events
         user_pseudo_id,

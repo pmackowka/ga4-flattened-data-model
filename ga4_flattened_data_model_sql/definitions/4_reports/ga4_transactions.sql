@@ -7,7 +7,7 @@ config {
 WITH purchase_events AS (
     SELECT
         e.user_pseudo_id,
-        CONCAT(e.user_pseudo_id, CAST(e.ga_session_id AS STRING)) AS session_key,
+        e.session_key,
         e.event_date,
         e.event_timestamp,
         e.ecommerce.transaction_id,

@@ -7,7 +7,7 @@ config {
 WITH purchases AS (
     SELECT
         e.user_pseudo_id,
-        CONCAT(e.user_pseudo_id, CAST(e.ga_session_id AS STRING)) AS session_key,
+        e.session_key,
         e.event_timestamp,
         e.event_date,
         e.ecommerce.transaction_id,
@@ -29,7 +29,7 @@ unnested_items AS (
         i.item_category,
         i.price,
         i.quantity,
-        (i.price * i.quantity) AS item_revenue
+        COALESCE(i.item_revenue, (i.price * i.quantity)) AS item_revenue
     FROM
         purchases p,
         UNNEST(p.items) as i
