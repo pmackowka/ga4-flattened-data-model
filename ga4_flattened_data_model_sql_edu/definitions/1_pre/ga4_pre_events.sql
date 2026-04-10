@@ -55,11 +55,12 @@ WITH base AS (
         -- Przechwytujemy ręcznie zapisane medium z parametrów utm_medium
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'medium') AS param_medium,
         
-        -- Sięgamy po pole systemowe session_traffic_source_last_click (gromadzone algorytmem GA4). Często jest wadliwe.
+        -- Jeśli chcesz wiedzieć, skąd dokładnie przyszedł ruch dla tego eventu, używasz tego pola.
         collected_traffic_source.manual_campaign.source AS collected_source,
         collected_traffic_source.manual_campaign.medium AS collected_medium,
         collected_traffic_source.manual_campaign.campaign_name AS collected_campaign,
-        
+
+        -- Kiedy chcesz mieć pewność, że każde zdarzenie ma przypisany jakikolwiek source/medium/campaign, nawet jeśli event nie ma jawnie ustawionych wartości.
         session_traffic_source_last_click.manual_campaign.source AS session_fallback_source,
         session_traffic_source_last_click.manual_campaign.medium AS session_fallback_medium,
         session_traffic_source_last_click.manual_campaign.campaign_name AS session_fallback_campaign,
@@ -102,7 +103,7 @@ SELECT
     -- SZEROKIE PRZYPISANIE ŹRÓDŁA:
     -- Funkcja COALESCE zwraca pierwszą napotkaną w nawiasie wartość, która nie jest pusta (NULL).
     -- Krok 1: Przeszukujemy (używając wyrażeń regularnych regex) 'page_location' w poszukiwaniu 'utm_source='.
-    -- Krok 2: Jeśli w linku nie było UTM, używamy the wyciągniętego 'param_source'
+    -- Krok 2: Jeśli w linku nie było UTM, używamy wyciągniętego 'param_source'
     -- Krok 3: Jeśli on również jest pusty, bierzemy systemowe 'collected_source' natywnie z GA4
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_source=([^&]+)'),
