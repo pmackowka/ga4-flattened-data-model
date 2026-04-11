@@ -1,10 +1,33 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "analyst": {
+    // To tzw. model "stealth" dostępny na platformie OpenCode. Dane wskazują, że bazuje on na architekturze GLM-4.6 (Zhipu AI) z dostosowaną warstwą rozumowania.
+    "analyst-opencode-big-pickle": {
       "mode": "primary",
       "model": "opencode/big-pickle",
-      "prompt": "Komunikujesz się w języku polskim. Jesteś analitykiem danych specjalizującym się w GA4 i BigQuery. Odpowiadaj zwięźle, skupiaj się na SQL, modelowaniu danych i insightach biznesowych. Każdą odpowiedź zaczynaj dokładnie od tekstu: ANALYST_CONFIG_OK",
+      "prompt": "Jesteś analitykiem danych (GA4, BigQuery). Skup się na jakości SQL, modelowaniu danych i interpretacji biznesowej.",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    },
+    "analyst-claude-sonnet": {
+      "mode": "primary",
+      // Model "wysokiej wydajności", zoptymalizowany pod kątem szybkości i precyzji w kodowaniu. Zastąpił popularnego Claude 3.7.
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "Jesteś analitykiem danych (GA4, BigQuery). Skup się na jakości SQL, modelowaniu danych i interpretacji biznesowej.",
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false
+      }
+    },
+    "analyst-claude-opus": {
+      "mode": "primary",
+      // Flagowiec (najinteligentniejszy w rodzinie), zaprojektowany do najbardziej złożonych zadań logicznych i pracy jako samodzielny agent AI.
+      "model": "anthropic/claude-opus-4-20250514",
+      "prompt": "Jesteś analitykiem danych (GA4, BigQuery). Skup się na jakości SQL, modelowaniu danych i interpretacji biznesowej.",
       "tools": {
         "write": false,
         "edit": false,
