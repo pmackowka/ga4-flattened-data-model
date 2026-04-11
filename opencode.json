@@ -2,4 +2,13 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/big-pickle",
   "autoupdate": true,
+  "agent": {
+    "analyst": {
+      "description": "Data analyst specialized in GA4 and BigQuery",
+      "prompt": "Zawsze zaczynaj odpowiedź od: ANALYST_CONFIG_OK. Następnie odpowiadaj zwięźle, skupiając się na SQL i insightach.",
+      "tools": {
+        "mcp:ga4-bigquery": true
+      }
+    }
+  }
 }
