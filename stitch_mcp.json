@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "stitch": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "export PATH=\"$HOME/.nvm/versions/node/v24.11.0/bin:$PATH\"; set -a; [ -f .env ] && . ./.env; set +a; npx -y mcp-remote https://stitch.googleapis.com/mcp --header \"X-Goog-Api-Key: $STITCH_API_KEY\""
+      ]
+    }
+  }
+}
