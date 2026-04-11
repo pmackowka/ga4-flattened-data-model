@@ -17,15 +17,8 @@ child.stdout.on('data', (data) => {
         const line = lines[i].trim();
         if (line && line.startsWith('{')) {
             const resp = JSON.parse(line);
-            if (resp.result && resp.result.content) {
-                const content = JSON.parse(resp.result.content[0].text);
-                if (content.projects) {
-                    content.projects.forEach(p => {
-                        console.log(`PROJECT: ${p.displayName} (${p.name}) Created at: ${p.createTime}`);
-                    });
-                } else {
-                    console.log('RESULT:', JSON.stringify(content));
-                }
+            if (resp.result && resp.result.prompts) {
+                console.log('PROMPTS:', JSON.stringify(resp.result.prompts, null, 2));
             }
         }
     }
@@ -44,12 +37,9 @@ function send(method, params = {}) {
 }
 
 setTimeout(() => {
-  send('tools/call', {
-    name: 'list_projects',
-    arguments: {}
-  });
+  send('prompts/list');
 }, 5000);
 
 setTimeout(() => {
     process.exit(0);
-}, 10000);
+}, 15000);
