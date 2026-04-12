@@ -55,7 +55,7 @@ WITH base AS (
         -- Przechwytujemy ręcznie zapisane medium z parametrów utm_medium
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'medium') AS param_medium,
         
-        -- Jeśli chcesz wiedzieć, skąd dokładnie przyszedł ruch dla tego eventu, używasz tego pola.
+        -- Jeśli chcesz wiedzieć, skąd dokładnie przyszedł ruch dla tego eventu, używasz collected_traffic_source.
         collected_traffic_source.manual_campaign.source AS collected_source,
         collected_traffic_source.manual_campaign.medium AS collected_medium,
         collected_traffic_source.manual_campaign.campaign_name AS collected_campaign,
