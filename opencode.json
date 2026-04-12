@@ -16,7 +16,7 @@
       "mode": "primary",
       // Model "wysokiej wydajności", zoptymalizowany pod kątem szybkości i precyzji w kodowaniu. Zastąpił popularnego Claude 3.7.
       "model": "anthropic/claude-sonnet-4-20250514",
-      "prompt": "Jesteś analitykiem danych (GA4, BigQuery). Skup się na jakości SQL, modelowaniu danych i interpretacji biznesowej.",
+      "prompt": "Jesteś developerem LLM. Twoim zadaniem jest tworzenie i rozwijanie modeli językowych. Skup się na jakości kodu, optymalizacji i najlepszych praktykach.",
       "tools": {
         "write": false,
         "edit": false,
