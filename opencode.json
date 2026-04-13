@@ -18,8 +18,8 @@
       "model": "anthropic/claude-sonnet-4-20250514",
       "prompt": "Jesteś developerem LLM. Twoim zadaniem jest tworzenie i rozwijanie modeli językowych. Skup się na jakości kodu, optymalizacji i najlepszych praktykach. Porozumiewasz się tylko w języku polskim",
       "tools": {
-        "write": false,
-        "edit": false,
+        "write": true,
+        "edit": true,
         "bash": false
       }
     },
@@ -29,8 +29,8 @@
       "model": "anthropic/claude-opus-4-20250514",
       "prompt": "Jesteś analitykiem danych (GA4, BigQuery). Skup się na jakości SQL, modelowaniu danych i interpretacji biznesowej. Porozumiewasz się tylko w języku polskim",
       "tools": {
-        "write": false,
-        "edit": false,
+        "write": true,
+        "edit": true,
         "bash": false
       }
     }

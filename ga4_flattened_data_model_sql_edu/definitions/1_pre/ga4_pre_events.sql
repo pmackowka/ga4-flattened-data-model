@@ -17,7 +17,7 @@ config {
 
 -- Otwieramy klauzulę WITH, tworząc wirtualną tabelę (CTE) o nazwie 'base'
 WITH base AS (
-    -- Wybiermy docelowe kolumny i obliczamy nowe pola
+    -- Wybieramy docelowe kolumny i obliczamy nowe pola
     SELECT
         -- Generujemy unikalny identyfikator zdarzenia. Sklejamy user_pseudo_id, znacznik czasu, nazwę eventu
         -- oraz hash (FARM_FINGERPRINT) całego stringu JSON z parametrami zdarzenia, aby zagwarantować unikalność.
@@ -77,7 +77,7 @@ WITH base AS (
         
     -- Warunek WHERE filtrujący pobierane wiersze
     WHERE 
-        -- RYGORYSTYCZNY FILTR testowy - pobieramy dynamicznie dane tylko z jednego, konretnego dnia:
+        -- RYGORYSTYCZNY FILTR testowy - pobieramy dynamicznie dane tylko z jednego, konkretnego dnia:
         -- dokładnie 7 dni wstecz od bieżącej daty (CURRENT_DATE).
         -- Formatujemy uzyskaną datę z powrotem na 'YYYYMMDD', aby system BigQuery odczytał partycje.
         event_date = FORMAT_DATE('%Y%m%d', DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY))
@@ -105,6 +105,7 @@ SELECT
     -- Krok 1: Przeszukujemy (używając wyrażeń regularnych regex) 'page_location' w poszukiwaniu 'utm_source='.
     -- Krok 2: Jeśli w linku nie było UTM, używamy wyciągniętego 'param_source'
     -- Krok 3: Jeśli on również jest pusty, bierzemy systemowe 'collected_source' natywnie z GA4
+    -- Krok 4: Jeśli on również jest pusty, bierzemy systemowe 'session_fallback_source' natywnie z GA4
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_source=([^&]+)'),
         param_source,
@@ -113,7 +114,7 @@ SELECT
     ) AS fixed_traffic_source,
     
     -- Szerokie przypisywanie twardego MEDIUM
-    -- Wykonujemy idenczyczną kaskadę spadania (COALESCE) szukając 'utm_medium='
+    -- Wykonujemy identyczną kaskadę spadania (COALESCE) szukając 'utm_medium='
     COALESCE(
         REGEXP_EXTRACT(page_location, r'[?&]utm_medium=([^&]+)'),
         param_medium,
@@ -130,10 +131,10 @@ SELECT
         session_fallback_campaign
     ) AS fixed_traffic_campaign,
     
-    -- Blok danych ecommerce idący paczką
+    -- Blok danych ecommerce przekazywany w całości
     ecommerce,
     
-    -- Blok zagnieżdżonych produktów idący tablicą
+    -- Blok zagnieżdżonych produktów przekazywany jako tablica
     items
 -- Zamykamy wybór odwołując się z którego cte korzystamy
 FROM base

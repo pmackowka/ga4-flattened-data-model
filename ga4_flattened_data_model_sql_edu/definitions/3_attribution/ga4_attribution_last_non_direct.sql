@@ -20,10 +20,10 @@ WITH user_paths AS (
         final_session_medium,
         session_start_timestamp,
         
-        -- [ZAAWANSOWANE: SZYKOWANIE DO OSTATNIEGO SKOKU] Sorter rewersowy z okna:
+        -- [ZAAWANSOWANE: SZYKOWANIE DO OSTATNIEGO SKOKU] Sorter odwrotny z okna:
         -- Logika układa od tyłu ranking dla pojedynczego okrążenia każdego klienta.
-        -- Czas sortowany jst wg DESC (Malejąco), co tworzy ranking 1, 2, 3.. tak, że wiersz nr = 1 przypadnie ZAWSZE 
-        -- tej najbardziej OSTATNIEJ historycznie sesji przed pchnięciem transakcji.
+        -- Czas sortowany jest wg DESC (Malejąco), co tworzy ranking 1, 2, 3.. tak, że wiersz nr = 1 przypadnie ZAWSZE 
+        -- tej najbardziej OSTATNIEJ historycznie sesji przed wykonaniem transakcji.
         ROW_NUMBER() OVER (PARTITION BY user_pseudo_id ORDER BY session_start_timestamp DESC) as reverse_session_rank
         
     -- Sięgamy bezpośrednio z zdeduplikowanej i oczyszczonej bazy logicznych sesji z wykluczeniem w locie trybu '(direct)' (Last Non-Direct Click). 
@@ -39,7 +39,7 @@ SELECT
     final_session_source,
     final_session_medium,
     
-    -- Jako model Single-Touch the weight stuka pełne i ostateczne odzwierciedleniie całej kasy lub ilości akcji na 1 sesji 
+    -- Jako model Single-Touch waga oddaje pełne i ostateczne odzwierciedlenie całej kwoty lub ilości akcji na 1 sesji 
     1.0 AS attribution_weight
     
 FROM

@@ -21,11 +21,11 @@ WITH user_paths AS (
         final_session_medium,
         session_start_timestamp,
         
-        -- [ZAAWANSOWANE: SUMOWANIE DO DZIELNIKA UŁAMKÓW WLINEARNYM ROZLICZENIU]
+        -- [ZAAWANSOWANE: SUMOWANIE DO DZIELNIKA UŁAMKÓW W LINEARNYM ROZLICZENIU]
         -- Aby w Linear podzielić ciasto np po 25% na każdego (przy 4 wizytach usera omijamy 'WHERE last_click=coś'),
         -- używamy okna zliczającego wystąpienia (COUNT).
-        -- PARTITION BY dzieli to wyłącznie dla ramy punktu 1-go ciastka usera. Wynikiem wiersza the total_sessions 
-        -- w nowym columnie będzie informacja "Ile razy tu gościłeś generalnie?". 
+        -- PARTITION BY dzieli to wyłącznie dla ramy punktu 1-go ciastka usera. Wynikiem wiersza total_sessions 
+        -- w nowej kolumnie będzie informacja "Ile razy tu gościłeś generalnie?". 
         COUNT(session_key) OVER (PARTITION BY user_pseudo_id) as total_sessions
         
     -- Sięgamy do dedup dla zaufanego wyciągu z sesji 
@@ -41,8 +41,8 @@ SELECT
     final_session_medium,
     
     -- Równomierny podział wagi ułamkowej:
-    -- Ponieważ usunęliśmy wiersze "które odpadają" (Linear bierze każdy etap the customer journey z tej 30-day puli na klacie),
-    -- to jeśli ktoś przed zakupem wszedł np. 4 razy z innych reklam, na każdą wizytę przypadnie przypisanie punktowe the attribution_weight (1.0 / 4) równe rynkowemu skokowi w raporcie jako 0.25 obrotu gotowki.
+    -- Ponieważ usunęliśmy wiersze "które odpadają" (Linear bierze każdy etap drogi klienta z tej 30-dniowej puli naciasz),
+    -- to jeśli ktoś przed zakupem wszedł np. 4 razy z innych reklam, na każdą wizytę przypadnie przypisanie punktowe wagi atrybucji (1.0 / 4) równe rynkowemu skokowi w raporcie jako 0.25 obrotu gotówki.
     1.0 / total_sessions AS attribution_weight
     
 -- Pobieramy na out... (bez WHERE, tutaj wszystkie sesje zostają!)
