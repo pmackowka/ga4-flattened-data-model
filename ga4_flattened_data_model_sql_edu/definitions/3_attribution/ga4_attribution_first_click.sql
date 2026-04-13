@@ -44,13 +44,13 @@ SELECT
     final_session_medium,
     
     -- Jako że to tzw. model Single-Touch (jeden punkt wygrywa wszystko), wpisujemy sztucznie pełną wagę dla całej operacji.
-    -- Oznacza to, że 1.0 (100%) wartości przychodów i zakupów z każdego działania spadnie wyłącznie na korzyść przypisaną w tym module w dolnych plikach the Reports.
+    -- Oznacza to, że 1.0 (100%) wartości przychodów i zakupów z każdego działania spadnie wyłącznie na korzyść przypisaną w tym module w dolnych plikach Reports.
     1.0 AS attribution_weight
     
--- Pobieramy to z wirtrualnej bazy userów posortowanych wyżej
+-- Pobieramy to z wirtualnej bazy userów posortowanych wyżej
 FROM
     user_paths
     
--- [ZŁOTY STRZAŁ] Odcinamy całą resztę i przypisujemy punkt tylko do sesji, pod którą postawiono nr = 1 (czyli tą totalnie najstarszą first click w układance the window ASC).
+-- [ZŁOTY STRZAŁ] Odcinamy całą resztę i przypisujemy punkt tylko do sesji, pod którą postawiono nr = 1 (czyli tą totalnie najstarszą first click w oknie sortowanym ASC).
 WHERE
     session_rank = 1

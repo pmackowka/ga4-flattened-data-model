@@ -7,7 +7,7 @@ config {
     schema: "ga4_flattened",
     
     -- Dokumentacja użyteczna przy przeglądaniu BQ
-    description: "Tabela wynikowa sesji po deduplikacji oraz nadpisaniu logicznego SESSION_LAST_NON_DIRECT."
+    description: "Tabela wynikowa sesji po deduplikacji oraz nadpisaniu SESSION_LAST_NON_DIRECT."
 }
 
 -- Otwieramy pierwsze podzapytanie (wspólną tabelę dla poniższych kroków)
@@ -43,21 +43,21 @@ last_non_direct_logic AS (
     SELECT 
         *,
         
-        -- [ZAAWANSOWANE: SZYMEROWANIE BEZPOŚREDNIMI] Wypełnianie brakujących UTM dla "Direct"
+        -- Wypełnianie brakujących UTM dla "Direct"
         -- 1. IF(warunek, TRUE, FALSE) w naszym wypadku IF(...) filtruje i wyrzuca '(direct)' zastępując go polem pustym NULL by nie brał go do wagi.
-        -- 2. Zabezpieczenie poprzez NULLIF(... , NULL) dodatkowo gwarantuje null jeśli wyjdzie null.
-        -- 3. LAST_VALUE( .. IGNORE NULLS) OVER: Ta komenda idzie po sesjach z perspektywy całego kalendarza danego klienta
+        -- 2. Zabezpieczenie poprzez NULLIF(... , NULL) dodatkowo gwarantuje wartość NULL jeśli wyjdzie pusta.
+        -- 3. LAST_VALUE( .. IGNORE NULLS) OVER: Ta komenda idzie po sesjach z perspektywy całej historii danego klienta
         -- 4. PARTITION BY user_pseudo_id - patrzymy wyłącznie z punktu widzenia historii jednego ciasteczka/urządzenia.
         -- 5. ORDER BY session_start_timestamp chronologicznie porządkuje sesje historycznie (krok po kroku)
         -- 6. Ogranicza ramkę poprzez domyślne ROWS BETWEEN UNBOUNDED PRECEDING (od zarania dziejów tego usera) AND CURRENT ROW (aż do czasu wystąpienia tej właśnie sesji).
-        -- Efekt: Jeśli obecna wpadła tu jako (direct), BQ poszuka poprzedniej sesji która directem nie była i nada jej źródło w dół.
+        -- Efekt: Jeśli obecna sesja wpadła tu jako (direct), BQ poszuka poprzedniej sesji która directem nie była i nada jej źródło poniżej.
         LAST_VALUE(NULLIF(IF(session_first_source = '(direct)', NULL, session_first_source), NULL) IGNORE NULLS) OVER(
             PARTITION BY user_pseudo_id
             ORDER BY session_start_timestamp 
             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
         ) AS session_last_non_direct_source,
         
-        -- Analogiczne zrzucenie dla medium wędrującego po "(none)"
+        -- Analogiczne przejęcie dla medium wędrującego po "(none)"
         LAST_VALUE(NULLIF(IF(session_first_medium = '(none)', NULL, session_first_medium), NULL) IGNORE NULLS) OVER(
             PARTITION BY user_pseudo_id
             ORDER BY session_start_timestamp 
@@ -85,6 +85,6 @@ SELECT
     -- Spadochron dla medium
     COALESCE(session_last_non_direct_medium, '(none)')  AS final_session_medium
     
--- Pobieramy to z naszej tabelki wirtualnej generującej the logic w CTE
+-- Pobieramy to z naszej tabelki wirtualnej generującej logikę w CTE
 FROM
     last_non_direct_logic

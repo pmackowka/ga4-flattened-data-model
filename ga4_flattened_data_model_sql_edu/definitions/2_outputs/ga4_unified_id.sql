@@ -6,7 +6,6 @@ config {
     -- Baza docelowa dla gotowego spłaszczonego rozwiązania Identity
     schema: "ga4_flattened",
     
-    -- Meta-opis dokumentacyjny dla młodszego analityka lub raportu
     description: "Tabela rozwiązywania tożsamości cross-device dla użytkowników (Identity resolution). Lookback window zalezne od bazy źródłowej."
 }
 
@@ -32,10 +31,8 @@ WITH id_matches AS (
     WHERE
         -- Aby rozwiązać tożsamość, system musiał zarejestrować chociaż raz zalogowane ID
         user_id IS NOT NULL 
-        -- (UWAGA JUNIORSKA: Z racji działania na stałej edukacyjnej kopii oknem 1-dniowym wyżej w modelu (warstwa pre_events) 
-        --   to the Lookback Window odgórnie tu podlega podcięciu z optymalizacji budżetowej).
         
-    -- Grupowanie unikalnych dopasowań pod tożsamość cookiesa + the user_id CRM
+    -- Grupowanie unikalnych dopasowań pod tożsamość cookiesa + user_id CRM
     GROUP BY
         user_pseudo_id,
         user_id
@@ -55,7 +52,7 @@ FROM
     
 -- [ZAAWANSOWANE: QUALIFY z ROW_NUMBER] Zabezpieczenie przed konfliktami Tożsamości:
 -- 1. Klient mógł założyć 2 twarde konta pod user_id siedząc na 1 cookies/urządzeniu. To spowodowałoby powieleniami 2 rozwiązań!
--- 2. The QUALIFY działa jak "WHERE" ale operuje już w fazie PO wykonaniu funkcji analitycznej "OVER".
--- 3. Polecenie liczy rzędy (ROW_NUMBER()) rozdzielając pacjentów ze względu na the user_pseudo_id, ustawiając w rankingu najwcześniejsze spotkanie pierwszego wiersza (ORDER BY first_seen_id ASC).
--- 4. Przepuszczamy (= 1) tylko jedno, najstarsze napotkane u góry hardowane powiązanie konta z tym anonimowym i ucinamy resztę (2, 3..). To rozwiązuje duplikaty cross device.
+-- 2. QUALIFY działa jak "WHERE" ale operuje już w fazie PO wykonaniu funkcji analitycznej "OVER".
+-- 3. Polecenie liczy rzędy (ROW_NUMBER()) rozdzielając użytkowników ze względu na user_pseudo_id, ustawiając w rankingu najwcześniejsze spotkanie pierwszego wiersza (ORDER BY first_seen_with_id ASC).
+-- 4. Przepuszczamy (= 1) tylko jedno, najstarsze napotkane powiązanie konta z tym anonimowym i ucinamy resztę (2, 3..). To rozwiązuje duplikaty cross device.
 QUALIFY ROW_NUMBER() OVER (PARTITION BY user_pseudo_id ORDER BY first_seen_with_id) = 1
