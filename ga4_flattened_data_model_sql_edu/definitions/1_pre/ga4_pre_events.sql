@@ -55,12 +55,12 @@ WITH base AS (
         -- Przechwytujemy ręcznie zapisane medium z parametrów utm_medium
         (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'medium') AS param_medium,
         
-        -- Jeśli chcesz wiedzieć, skąd dokładnie przyszedł ruch dla tego eventu, używasz collected_traffic_source.
+        -- Dane z eventów. Jeśli chcesz wiedzieć, skąd dokładnie przyszedł ruch dla tego eventu, używasz collected_traffic_source.
         collected_traffic_source.manual_campaign.source AS collected_source,
         collected_traffic_source.manual_campaign.medium AS collected_medium,
         collected_traffic_source.manual_campaign.campaign_name AS collected_campaign,
 
-        -- Kiedy chcesz mieć pewność, że każde zdarzenie ma przypisany jakikolwiek source/medium/campaign, nawet jeśli event nie ma jawnie ustawionych wartości.
+        -- Dane sesyjne. Kiedy chcesz mieć pewność, że każde zdarzenie ma przypisany jakikolwiek source/medium/campaign, nawet jeśli event nie ma jawnie ustawionych wartości.
         session_traffic_source_last_click.manual_campaign.source AS session_fallback_source,
         session_traffic_source_last_click.manual_campaign.medium AS session_fallback_medium,
         session_traffic_source_last_click.manual_campaign.campaign_name AS session_fallback_campaign,
