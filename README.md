@@ -43,8 +43,7 @@ npm install
 
 2. Skonfiguruj `.env`:
 ```bash
-cp .env.example .env
-# Wypełnij GCP_PROJECT_ID i inne zmienne
+# Dodaj swoje zmienne (GCP_PROJECT_ID, API keys)
 ```
 
 3. Skompiluj i uruchom:
