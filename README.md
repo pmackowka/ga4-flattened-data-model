@@ -8,6 +8,8 @@ Główne tabele: sesje z atrybucją (first-click, last-non-direct, linear), tran
 
 ## Struktura projektu
 
+`ls -la /Users/p/Documents/dev/GA4-Flattened-Data-Model-Vibe/`
+
 ```
 GA4-Flattened-Data-Model-Vibe/
 ├── .env                     # Zmienne środowiskowe (API keys)
