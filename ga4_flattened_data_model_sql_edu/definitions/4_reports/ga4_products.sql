@@ -68,7 +68,7 @@ unnested_items AS (
         -- Stan ilościowy rzucony na kosz jako number
         i.quantity,
         
-        -- [OBLICZENIOWA] Wyliczamy ręcznie z błędu G4 rynkowe obroty czyste produktu
+        -- Wyliczamy ręcznie z błędu G4 rynkowe obroty czyste produktu
         -- na wypadek gdy item_revenue wpisany jako pole typu string był null / 0
         COALESCE(i.item_revenue, (i.price * i.quantity)) AS item_revenue
         
