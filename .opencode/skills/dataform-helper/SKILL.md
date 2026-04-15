@@ -23,7 +23,7 @@ description: Kompleksowy helper do projektów Dataform i modelowania danych GA4/
 ### Struktura katalogów
 
 ```
-Vibe-coding/
+ga4_flattened_data_model_vibe/
 ├── ga4_flattened_data_model/          # Główny projekt Dataform (.sqlx)
 │   ├── dataform.json                   # Konfiguracja: ga4_flattened, BigQuery, EU
 │   └── definitions/
