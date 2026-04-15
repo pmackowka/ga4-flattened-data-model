@@ -20,7 +20,7 @@ Niestandardowi agenci skonfigurowani dla polskojęzycznej analizy GA4/BigQuery. 
 
 ## Środowisko
 - `.env` zawiera GEMINI_API_KEY i STITCH_API_KEY
-- `.venv/` istnieje, ale nieużywany (Python nieaktywny)
+- OpenCode zainstalowany globalnie (wymaga Node v24.11.0 do MCP Stitch)
 
 ## Kluczowe pliki
 - `dataform.json` w każdym projekcie Dataform — konfiguracja warehouse (BigQuery, domyślna lokalizacja: EU)
