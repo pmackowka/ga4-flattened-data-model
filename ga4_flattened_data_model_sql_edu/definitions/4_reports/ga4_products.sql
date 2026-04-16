@@ -67,8 +67,8 @@ unnested_items AS (
         
         -- Stan ilościowy rzucony na kosz jako number
         i.quantity,
-        
-        -- Wyliczamy ręcznie z błędu G4 rynkowe obroty czyste produktu
+
+        -- [OBLICZENIOWA] Wyliczamy ręcznie z błędu G4 rynkowe obroty czyste produktu
         -- na wypadek gdy item_revenue wpisany jako pole typu string był null / 0
         COALESCE(i.item_revenue, (i.price * i.quantity)) AS item_revenue
         
@@ -90,18 +90,16 @@ SELECT
     u.quantity,
     u.item_revenue,
     
--- [Atrybucja Dołączona]: Złączenie modelu do każdej unikalnej transakcji!
+        -- [Atrybucja Dołączona]: Złączenie modelu do każdej unikalnej transakcji!
         -- Wyciągamy source / medium ze skompilowanego w logice "Last Non Direct".
         -- Wrzucając tutaj JOIN, z łatwością model udowadnia siłę Data Ops przy dynamicznych podziałach
     attr.final_session_source AS attribution_source,
     attr.final_session_medium AS attribution_medium,
     
-    -- Oddajemy w Looker Studio wagę. 1.0 (zakodowaną domyślnie), dzięki modelce pojedynczej (first / last).
-    -- Używana zazwyczaj we wspinaczkach LTV na linearach przy mnożeniu
+    -- Oddajemy w Looker Studio wagę. 1.0 (zakodowaną domyślnie)
     attr.attribution_weight
     
 FROM
-    -- Korzeniemy się w rozpieczestanej tablicy unnested
     unnested_items u
     
 -- Szukamy przypisania z okrążenia 3 warstwy modelu 
