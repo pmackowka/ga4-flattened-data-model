@@ -1,4 +1,4 @@
-# GA4 Flattened Data Model
+# ga4-flattened-data-model
 
 Projekt do modelowania danych Google Analytics 4 (GA4) w BigQuery. Udostępnia zestaw zmaterializowanych tabel SQLx (Dataform) które spłaszczają surowe dane `events_*` z GA4 do czytelnej struktury gotowej do analizy i raportowania.
 
