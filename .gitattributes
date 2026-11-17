@@ -1,0 +1,6 @@
+# GitHub Linguist traktuje SQL jako typ "data" i domyślnie pomija go w statystykach języków.
+# linguist-detectable włącza pliki .sql do paska języków repozytorium.
+*.sql linguist-detectable
+
+# Dataform .sqlx nie ma własnego języka w Linguist — liczony jako SQL.
+*.sqlx linguist-language=SQL linguist-detectable
